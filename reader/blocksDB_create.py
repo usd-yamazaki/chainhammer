@@ -154,7 +154,7 @@ def SQLfileIntoDB(conn, commitEvery=100000):
     read sql commands text file and execute into DB
     """
     
-    before = time.clock()
+    before = time.time()
     
     c = conn.cursor()
     
@@ -177,7 +177,7 @@ def SQLfileIntoDB(conn, commitEvery=100000):
     conn.commit()
     print ()
     print ("last one was: ", lastline)
-    duration = time.clock() - before
+    duration = time.time() - before
     print ("\nexecute & commit %d SQL statements (where %d duplicates) into DB took %.2f seconds\n" % (numRows, duplicates, duration))
 
 
@@ -304,10 +304,10 @@ def manyBlocks_multithreaded(blockNumberFrom=0, numBlocks=1000):
     DB_dropTable()
     DB_createTable()
     
-    before = time.clock()
+    before = time.time()
     multithreadedQueue(blockNumberFrom = blockNumberFrom, 
                        blockNumberTo = blockNumberFrom + numBlocks)
-    duration = time.clock() - before
+    duration = time.time() - before
     print ("\n%d blocks took %.2f seconds\n" % (numBlocks, duration))
 
 
@@ -319,11 +319,11 @@ def manyBlocks_singlethreaded(blockNumberFrom=1000001, numBlocks=3391848):
     """
     iterate through blocks, write SQL statements into text file
     """
-    before = time.clock()
+    before = time.time()
     print ("\n", blockNumberFrom, end=" ")
     for i in range(blockNumberFrom, blockNumberFrom+numBlocks):
         getBlock_then_store(i)
-    duration = time.clock() - before
+    duration = time.time() - before
     print ("\n%d blocks took %.2f seconds\n" % (numBlocks, duration))  
 
 
@@ -344,18 +344,18 @@ def tests():
     print ()
     DB_readTable(conn)
         
-    before = time.clock()
+    before = time.time()
     numBlocks=1000
     blockNumberFrom=2386000
     blockNumberTo=blockNumberFrom + numBlocks 
     multithreadedQueue(blockNumberFrom=blockNumberFrom, blockNumberTo=blockNumberTo, 
                        num_worker_threads=1)
-    duration = time.clock() - before
+    duration = time.time() - before
     print ("\n%d blocks took %.2f seconds\n" % (numBlocks, duration))
 
-    before = time.clock()
+    before = time.time()
     SQLfileIntoDB(conn)
-    duration = time.clock() - before
+    duration = time.time() - before
     print ("\n%d SQL statements into DB took %.2f seconds\n" % (numBlocks, duration))
     
     DB_tableSize(conn)
