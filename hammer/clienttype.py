@@ -128,7 +128,7 @@ def clientType(w3):
     nodeString = w3.version.node
     
     nodeName = nodeString.split("/")[0] 
-    known = ("Geth", "Parity", "Parity-Ethereum", "Energy Web", "TestRPC")
+    known = ("Geth", "Parity", "Parity-Ethereum", "OpenEthereum", "Energy Web", "TestRPC")
     if nodeName not in known:
         print ("Interesting, '%s', a new node type? '%s'" % (nodeName, nodeString))
     
@@ -153,6 +153,9 @@ def clientType(w3):
     if nodeName == "Energy Web":
         nodeType = "Parity"
         consensus = "PoA"  # Dangerous assumption. TODO: ... after they took care of the open issues, this gets easier. 
+
+    if nodeName == "OpenEthereum":
+        nodeType = "Parity"
 
 
     if nodeType=="Parity":

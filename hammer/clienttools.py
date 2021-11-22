@@ -159,7 +159,7 @@ def unlockAccount(duration=3600, account=None):
     unlock once, then leave open, to later not loose time for unlocking
     """
     
-    if ("TestRPC" in w3.version.node) or (PARITY_ALREADY_UNLOCKED and ("Parity" in w3.version.node)):
+    if ("TestRPC" in w3.version.node) or (PARITY_ALREADY_UNLOCKED and (NODETYPE == "Parity")):
         return True # TestRPC does not need unlocking; or parity can be CLI-switch unlocked when starting
     
     if NODENAME=="Quorum":
