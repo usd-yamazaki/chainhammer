@@ -23,7 +23,6 @@ from queue import Queue
 from pprint import pprint
 
 # pypi:
-import requests # pip3 install requests
 import web3
 from web3 import Web3, HTTPProvider # pip3 install web3
 from web3.utils.abi import filter_by_name, abi_to_signature
@@ -35,7 +34,7 @@ from hammer.config import PARITY_UNLOCK_EACH_TRANSACTION
 from hammer.config import GAS_FOR_SET_CALL
 from hammer.config import FILE_LAST_EXPERIMENT, EMPTY_BLOCKS_AT_END
 from hammer.deploy import loadFromDisk
-from hammer.clienttools import web3connection, unlockAccount
+from hammer.clienttools import postRpc, web3connection, unlockAccount
 
 
 ##########################
@@ -162,7 +161,7 @@ def contract_set_via_RPC(contract, arg, hashes = None, privateFor=PRIVATE_FOR, g
                "params" : [txParameters],
                "id"     : 1}
     headers = {'Content-type' : 'application/json'}
-    response = requests.post(RPCaddress, json=payload, headers=headers)
+    response = postRpc(RPCaddress, json=payload, headers=headers)
     # print('raw json response: {}'.format(response.json()))
     tx = response.json()['result']
         

@@ -26,6 +26,7 @@ import requests
 import hammer
 from hammer.config import RPCaddress
 from hammer.clienttype import curl_post
+from hammer.clienttools import postRpc
 
 ##########################
 ##
@@ -36,7 +37,7 @@ def call_port(RPCaddress=RPCaddress):
     """
     headers=headers = {'Content-type': 'application/json'}
     try:
-        response = requests.post(RPCaddress, headers=headers) # GET does not work on parity instantseal 
+        response = postRpc(RPCaddress, headers=headers) # GET does not work on parity instantseal 
     except requests.exceptions.ConnectionError:
         success, error = False, 'ConnectionError'
     else:

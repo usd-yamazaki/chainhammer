@@ -14,9 +14,8 @@
 ################
 ## Dependencies:
 
-import json
 from pprint import pprint
-import requests # pip3 install requests
+import hammer
 
 try:
     from web3 import Web3, HTTPProvider # pip3 install web3
@@ -53,7 +52,7 @@ def curl_post(method, txParameters=None, RPCaddress=RPCaddress, ifPrint=False):
     if txParameters:
         payload["params"] = [txParameters]
     headers = {'Content-type' : 'application/json'}
-    response = requests.post(RPCaddress, json=payload, headers=headers)
+    response = hammer.clienttools.postRpc(RPCaddress, json=payload, headers=headers)
     response_json = response.json()
     
     if ifPrint: 

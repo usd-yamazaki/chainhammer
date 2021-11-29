@@ -13,11 +13,17 @@
 ################
 ## Dependencies:
 
+import json as jsonlib
 import os
 from pprint import pprint
+from urllib.parse import urlparse
+import requests
+import websocket
+
 
 try:
-    from web3 import Web3, HTTPProvider # pip3 install web3
+    from web3 import Web3, HTTPProvider, WebsocketProvider, IPCProvider # pip3 install web3
+    from web3.providers.auto import HTTP_SCHEMES, WS_SCHEMES
 except:
     print ("Dependencies unavailable. Start virtualenv first!")
     exit()
@@ -50,6 +56,47 @@ def printVersions():
 ################################################################################
 # get a connection, and find out as much as possible
 
+class WsResponseWrapper:
+    def __init__(self, response):
+        self.response = response
+
+    def json(self):
+        return jsonlib.loads(self.response)
+
+def postRpc(RPCaddress, json=None, headers=None):
+    uri = urlparse(RPCaddress)
+    if uri.scheme in HTTP_SCHEMES:
+        return requests.post(RPCaddress, json=json, headers=headers)
+    elif uri.scheme in WS_SCHEMES:
+        #websocket.enableTrace(True)
+        ws = websocket.create_connection(RPCaddress, header=headers)
+        ws.send(jsonlib.dumps(json))
+        response =  ws.recv()
+        ws.close()
+        return WsResponseWrapper(response)
+    else:
+        raise NotImplementedError(
+            'RPC does not know how to connect to scheme %r in %r' % (
+                uri.scheme,
+                RPCaddress,
+            )
+        )
+
+def getWeb3Provider(RPCaddress):
+    uri = urlparse(RPCaddress)
+    if uri.scheme == 'file':
+        return IPCProvider(uri.path)
+    elif uri.scheme in HTTP_SCHEMES:
+        return HTTPProvider(RPCaddress, request_kwargs={'timeout': 120})
+    elif uri.scheme in WS_SCHEMES:
+        return WebsocketProvider(RPCaddress, websocket_timeout=120)
+    else:
+        raise NotImplementedError(
+            'Web3 does not know how to connect to scheme %r in %r' % (
+                uri.scheme,
+                RPCaddress,
+            )
+        )
 
 def start_web3connection(RPCaddress=None, account=None):
     """
@@ -59,7 +106,7 @@ def start_web3connection(RPCaddress=None, account=None):
     if RPCaddress:
         # HTTP provider 
         # (TODO: also try whether IPC provider is faster, when quorum-outside-vagrant starts working)
-        w3 = Web3(HTTPProvider(RPCaddress, request_kwargs={'timeout': 120}))
+        w3 = Web3(getWeb3Provider(RPCaddress))
     else:
         # w3 = Web3(Web3.EthereumTesterProvider()) # does NOT work!
         w3 = Web3(Web3.TestRPCProvider()) 
