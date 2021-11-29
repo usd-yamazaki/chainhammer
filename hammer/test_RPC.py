@@ -9,7 +9,7 @@
 """
 
 from pprint import pprint
-import requests # pip3 install requests
+from hammer.clienttools import postRpc
 
 print ("Start a network node, for example by:")
 print ("    geth --rpc --dev")
@@ -33,7 +33,7 @@ headers = {'Content-type' : 'application/json'}
 print ("\nUsing '%s' to query RPC, with payload '%s'\n" % (RPCaddress, payload))
 
 try:
-    response = requests.post(RPCaddress, json=payload, headers=headers, timeout=5)
+    response = postRpc(RPCaddress, json=payload, headers=headers, timeout=5)
     
 except Exception as e:
     print ("Bad: (%s) %s" % (type(e), e))
